@@ -1,26 +1,580 @@
 @import "tailwindcss";
 
+/* 
+  ---break---
+*/
+@custom-variant dark (&:is(.dark *));
+
+/* 
+  DESIGN SYSTEM: MED-GEMINI TRIAGE DASHBOARD
+  Aesthetic: Modern Clinical Precision - Professional Medical SaaS
+  Dark mode with emerald/teal accent, clean surfaces, and excellent readability.
+*/
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ==============================================
+     UNIFIED DESIGN TOKENS - LIGHT MODE (DEFAULT)
+     ============================================== */
+
+  /* Surface Layers */
+  --surface-0: hsl(0, 0%, 100%);
+  --surface-1: hsl(210, 20%, 98%);
+  --surface-2: hsl(210, 20%, 96%);
+  --surface-3: hsl(210, 20%, 94%);
+
+  /* ==============================================
+  /* ==============================================
+     TEXT COLORS
+     ============================================== */
+  --muted: hsl(210, 10%, 85%);
+  /* Lighter for light mode borders/backgrounds */
+  --muted-foreground: hsl(210, 10%, 30%);
+  /* Darkened for better readability */
+
+  /* ==============================================
+     BRAND COLORS
+     ============================================== */
+  --primary: hsl(160, 84%, 39%);
+  --primary-foreground: hsl(210, 20%, 98%);
+  --primary-glow: hsla(160, 84%, 39%, 0.15);
+
+  --accent-teal: hsl(172, 66%, 45%);
+  /* Slightly darker for contrast on white */
+  --accent-teal-foreground: hsl(0, 0%, 100%);
+
+  /* ==============================================
+     SEMANTIC COLORS
+     ============================================== */
+  --success: hsl(142, 72%, 40%);
+  --warning: hsl(38, 92%, 50%);
+  --danger: hsl(4, 90%, 58%);
+  --info: hsl(199, 89%, 48%);
+
+  /* Urgency Mapping */
+  --urgency-low: hsl(142, 72%, 40%);
+  --urgency-medium: hsl(38, 92%, 50%);
+  --urgency-high: hsl(25, 95%, 55%);
+  --urgency-critical: hsl(4, 90%, 58%);
+
+  /* ==============================================
+     BORDERS & DIVIDERS
+     ============================================== */
+  --border: hsla(210, 20%, 15%, 0.20);
+  /* Darkened for cleaner borders */
+  --border-subtle: hsla(210, 20%, 15%, 0.10);
+
+  /* Glass Effects */
+  --glass-bg: hsla(0, 0%, 100%, 0.75);
+  --glass-border: hsla(160, 84%, 39%, 0.1);
+
+  /* ==============================================
+     RADIUS SYSTEM
+     ============================================== */
+  --radius: 0.5rem;
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.625rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-full: 9999px;
+
+  /* ==============================================
+     SHADOWS
+     ============================================== */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+  --shadow-glow: 0 0 20px -5px var(--primary);
+
+  /* Shadcn / Radix Colors - Light Mode */
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(210, 20%, 9%);
+
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(210, 20%, 9%);
+
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(210, 20%, 9%);
+
+  --secondary: hsl(210, 20%, 96%);
+  --secondary-foreground: hsl(210, 20%, 9%);
+
+  --accent: hsl(210, 20%, 96%);
+  --accent-foreground: hsl(210, 20%, 9%);
+
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(210, 20%, 98%);
+
+  --input: hsla(210, 20%, 15%, 0.15);
+  --ring: hsl(160, 84%, 39%);
+
+  --chart-1: hsl(160, 84%, 39%);
+  --chart-2: hsl(172, 66%, 50%);
+  --chart-3: hsl(199, 89%, 60%);
+  --chart-4: hsl(142, 76%, 46%);
+  --chart-5: hsl(38, 92%, 60%);
+
+  --sidebar: hsl(210, 20%, 98%);
+  --sidebar-foreground: hsl(210, 20%, 40%);
+  --sidebar-primary: hsl(160, 84%, 39%);
+  --sidebar-primary-foreground: hsl(0, 0%, 100%);
+  --sidebar-accent: hsl(210, 20%, 96%);
+  --sidebar-accent-foreground: hsl(210, 20%, 9%);
+  --sidebar-border: hsla(210, 20%, 15%, 0.1);
+  --sidebar-ring: hsl(160, 84%, 39%);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-surface-0: var(--surface-0);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-glow: var(--primary-glow);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
+  --color-border: var(--border);
+  --color-border-subtle: var(--border-subtle);
+  --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-display: 'Archivo', system-ui, sans-serif;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: var(--border);
 }
 
 body {
-  background: var(--background);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ==============================================
+   SCROLLBAR STYLING
+   ============================================== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface-1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--surface-3);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsla(160, 84%, 39%, 0.5);
+}
+
+/* ==============================================
+   GLASS CARD - Premium Glassmorphism
+   ============================================== */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ==============================================
+   GLOW EFFECT ON HOVER
+   ============================================== */
+.glow-hover {
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.glow-hover:hover {
+  box-shadow: var(--shadow-glow);
+  transform: translateY(-2px);
+}
+
+/* ==============================================
+   GRADIENT TEXT
+   ============================================== */
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ==============================================
+   URGENCY BADGE STYLES
+   ============================================== */
+.urgency-low {
+  background: var(--urgency-low);
+  color: hsl(210, 20%, 4%);
+}
+
+.urgency-medium {
+  background: var(--urgency-medium);
+  color: hsl(210, 20%, 4%);
+}
+
+.urgency-high {
+  background: var(--urgency-high);
+  color: white;
+}
+
+.urgency-critical {
+  background: var(--urgency-critical);
+  color: white;
+  animation: pulse-critical 2s infinite;
+}
+
+@keyframes pulse-critical {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* ==============================================
+   STAGGERED REVEAL ANIMATIONS
+   ============================================== */
+.stagger-reveal>* {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: stagger-fade-in 0.5s ease forwards;
+}
+
+.stagger-reveal>*:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.stagger-reveal>*:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.stagger-reveal>*:nth-child(3) {
+  animation-delay: 0.15s;
+}
+
+.stagger-reveal>*:nth-child(4) {
+  animation-delay: 0.2s;
+}
+
+.stagger-reveal>*:nth-child(5) {
+  animation-delay: 0.25s;
+}
+
+.stagger-reveal>*:nth-child(6) {
+  animation-delay: 0.3s;
+}
+
+@keyframes stagger-fade-in {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==============================================
+   SUBTLE BACKGROUND GRID (Optional - Lighter)
+   ============================================== */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* ==============================================
+   MARKDOWN/PROSE STYLES FOR REPORT CONTENT
+   ============================================== */
+.prose-report {
+  color: var(--muted-foreground);
+  line-height: 1.7;
+}
+
+.prose-report h1,
+.prose-report h2,
+.prose-report h3,
+.prose-report h4 {
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 600;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+.prose-report h1 {
+  font-size: 1.25rem;
+}
+
+.prose-report h2 {
+  font-size: 1.1rem;
+}
+
+.prose-report h3 {
+  font-size: 1rem;
+}
+
+.prose-report p {
+  margin-bottom: 0.75em;
+}
+
+.prose-report strong {
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.prose-report ul,
+.prose-report ol {
+  margin-left: 1.5em;
+  margin-bottom: 0.75em;
+}
+
+.prose-report ul {
+  list-style-type: disc;
+}
+
+.prose-report ol {
+  list-style-type: decimal;
+}
+
+.prose-report li {
+  margin-bottom: 0.25em;
+}
+
+.prose-report li::marker {
+  color: var(--primary);
+}
+
+.prose-report code {
+  background: var(--surface-2);
+  padding: 0.125em 0.375em;
+  border-radius: var(--radius-sm);
+  font-size: 0.875em;
+}
+
+.prose-report blockquote {
+  border-left: 3px solid var(--primary);
+  padding-left: 1em;
+  margin-left: 0;
+  font-style: italic;
+  color: var(--muted);
+}
+
+/* 
+  ---break---
+*/
+
+.dark {
+  /* Surface Layers - Deep, Professional Dark Theme */
+  --surface-0: hsl(210, 20%, 4%);
+  --surface-1: hsl(210, 18%, 7%);
+  --surface-2: hsl(210, 16%, 11%);
+  --surface-3: hsl(210, 14%, 16%);
+
+  /* Text Colors */
+  --muted: hsl(210, 10%, 65%);
+  --muted-foreground: hsl(210, 12%, 70%);
+
+  /* Brand Colors */
+  --primary: hsl(160, 84%, 39%);
+  --primary-foreground: hsl(210, 20%, 98%);
+  --primary-glow: hsla(160, 84%, 39%, 0.25);
+
+  --accent-teal: hsl(172, 66%, 50%);
+  --accent-teal-foreground: hsl(210, 20%, 4%);
+
+  /* Semantic Colors */
+  --success: hsl(142, 76%, 46%);
+  --warning: hsl(38, 92%, 60%);
+  --danger: hsl(4, 90%, 58%);
+  --info: hsl(199, 89%, 60%);
+
+  /* Urgency Mapping */
+  --urgency-low: hsl(142, 76%, 46%);
+  --urgency-medium: hsl(38, 92%, 60%);
+  --urgency-high: hsl(25, 95%, 55%);
+  --urgency-critical: hsl(4, 90%, 58%);
+
+  /* Borders */
+  --border: hsla(210, 20%, 40%, 0.25);
+  --border-subtle: hsla(210, 20%, 40%, 0.12);
+
+  /* Glass Effects */
+  --glass-bg: hsla(210, 18%, 8%, 0.85);
+  --glass-border: hsla(160, 84%, 39%, 0.15);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.35), 0 2px 4px -2px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+  --shadow-glow: 0 0 30px -8px var(--primary);
+
+  /* Shadcn / Radix Colors - Dark Mode */
+  --background: hsl(210, 20%, 4%);
+  --foreground: hsl(210, 20%, 98%);
+
+  --card: hsl(210, 18%, 7%);
+  --card-foreground: hsl(210, 20%, 98%);
+
+  --popover: hsl(210, 18%, 7%);
+  --popover-foreground: hsl(210, 20%, 98%);
+
+  --secondary: hsl(210, 14%, 16%);
+  --secondary-foreground: hsl(210, 20%, 98%);
+
+  --accent: hsl(210, 14%, 16%);
+  --accent-foreground: hsl(210, 20%, 98%);
+
+  --destructive: hsl(4, 90%, 58%);
+  --destructive-foreground: hsl(210, 20%, 98%);
+
+  --input: hsla(210, 20%, 40%, 0.25);
+  --ring: hsl(160, 84%, 39%);
+
+  --chart-1: hsl(160, 84%, 39%);
+  --chart-2: hsl(172, 66%, 50%);
+  --chart-3: hsl(199, 89%, 60%);
+  --chart-4: hsl(142, 76%, 46%);
+  --chart-5: hsl(38, 92%, 60%);
+
+  --sidebar: hsl(210, 18%, 7%);
+  --sidebar-foreground: hsl(210, 20%, 98%);
+  --sidebar-primary: hsl(160, 84%, 39%);
+  --sidebar-primary-foreground: hsl(210, 20%, 98%);
+  --sidebar-accent: hsl(210, 14%, 16%);
+  --sidebar-accent-foreground: hsl(210, 20%, 98%);
+  --sidebar-border: hsla(210, 20%, 40%, 0.25);
+  --sidebar-ring: hsl(160, 84%, 39%);
+}
+
+/* 
+  ---break---
+*/
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* ==============================================
+   PRIMARY BUTTON GRADIENT - Medical Green
+   ============================================== */
+.btn-primary-gradient {
+  background: linear-gradient(135deg, hsl(160, 84%, 39%) 0%, hsl(172, 66%, 50%) 100%);
+  color: white;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-primary-gradient:hover {
+  background: linear-gradient(135deg, hsl(160, 84%, 44%) 0%, hsl(172, 66%, 55%) 100%);
+  box-shadow: 0 4px 12px -2px hsla(160, 84%, 39%, 0.4);
+}
+
+/* ==============================================
+   START TRIAGE BUTTON - Premium Green Gradient
+   ============================================== */
+.btn-triage-gradient {
+  background: linear-gradient(135deg, hsl(160, 84%, 36%) 0%, hsl(152, 76%, 42%) 50%, hsl(145, 70%, 48%) 100%);
+  color: white;
+  font-weight: 600;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 15px -3px hsla(160, 84%, 39%, 0.4);
+}
+
+.btn-triage-gradient:hover {
+  background: linear-gradient(135deg, hsl(160, 84%, 40%) 0%, hsl(152, 76%, 46%) 50%, hsl(145, 70%, 52%) 100%);
+  box-shadow: 0 6px 20px -3px hsla(160, 84%, 39%, 0.55);
+  transform: translateY(-1px);
+}
+
+.btn-triage-gradient:active {
+  transform: translateY(0);
+}
+
+/* ==============================================
+   FOCUS STATES - Green Ring
+   ============================================== */
+.focus-ring:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* ==============================================
+   STATUS INDICATOR DOT
+   ============================================== */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--primary);
+  box-shadow: 0 0 8px 2px hsla(160, 84%, 39%, 0.4);
+}
+
+.status-dot-pulse {
+  animation: status-pulse 2s ease-in-out infinite;
+}
+
+@keyframes status-pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
 }

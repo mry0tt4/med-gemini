@@ -1,0 +1,275 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================================
+// Patient Model (EHR/FHIR Compliant)
+// Based on HL7 FHIR Patient Resource: https://www.hl7.org/fhir/patient.html
+// ============================================================================
+model Patient {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Demographics (FHIR: Patient.name, Patient.birthDate, Patient.gender)
+  name        String
+  dateOfBirth DateTime
+  gender      String   // male | female | other | unknown (FHIR standard)
+
+  // Contact Information (FHIR: Patient.telecom, Patient.address)
+  phone       String?
+  email       String?
+  address     String?  @db.Text
+
+  // Emergency Contact (FHIR: Patient.contact)
+  emergencyContactName  String?
+  emergencyContactPhone String?
+  emergencyContactRelation String?
+
+  // Identifiers (FHIR: Patient.identifier)
+  mrn         String?  @unique // Medical Record Number
+  ssn         String?  // Social Security Number (encrypted in production)
+
+  // AI-Generated Longitudinal Summary
+  medicalHistorySummary String? @db.Text
+
+  // Relations
+  encounters      Encounter[]
+  medicalHistory  MedicalHistory[]
+  medications     Medication[]
+  externalReports ExternalReport[]
+}
+
+// ============================================================================
+// Medical History Model (EHR/FHIR Compliant)
+// Based on HL7 FHIR Condition Resource: https://www.hl7.org/fhir/condition.html
+// ============================================================================
+model MedicalHistory {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  patientId String
+  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  // Entry Type (maps to FHIR Condition categories)
+  type        String   // condition | allergy | surgery | family_history | social_history | immunization
+
+  // Clinical Status (FHIR: Condition.clinicalStatus)
+  clinicalStatus String @default("active") // active | recurrence | relapse | inactive | remission | resolved
+
+  // Description (FHIR: Condition.code)
+  description String  @db.Text
+
+  // Timing (FHIR: Condition.onset, Condition.abatement)
+  onsetDate   DateTime?
+  abatementDate DateTime? // When condition resolved/ended
+
+  // Severity (FHIR: Condition.severity)
+  severity    String?  // mild | moderate | severe
+
+  // Coding (FHIR: Condition.code)
+  icd10Code   String?  // ICD-10 code
+  snomedCode  String?  // SNOMED CT code
+
+  // Notes
+  notes       String?  @db.Text
+
+  // Verification Status (FHIR: Condition.verificationStatus)
+  verificationStatus String @default("confirmed") // unconfirmed | provisional | differential | confirmed | refuted | entered-in-error
+}
+
+// ============================================================================
+// Medication Model (EHR/FHIR Compliant)
+// Based on HL7 FHIR MedicationStatement/MedicationRequest Resources
+// ============================================================================
+model Medication {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  patientId String
+  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  // Medication Information (FHIR: MedicationStatement.medication)
+  name        String    // Drug name
+  genericName String?   // Generic drug name
+  rxNormCode  String?   // RxNorm code for interoperability
+
+  // Dosage (FHIR: MedicationStatement.dosage)
+  dosage      String?   // e.g., "500mg"
+  frequency   String?   // e.g., "twice daily", "every 8 hours"
+  route       String?   // oral | topical | injection | inhalation | etc.
+
+  // Status (FHIR: MedicationStatement.status)
+  status      String    @default("active") // active | completed | stopped | on-hold | unknown
+
+  // Timing
+  startDate   DateTime?
+  endDate     DateTime?
+
+  // Prescriber Information
+  prescribedBy String?
+  prescriptionDate DateTime?
+
+  // Reason (FHIR: MedicationStatement.reasonCode)
+  reason      String?   @db.Text
+
+  // Pharmacy Information
+  pharmacy    String?
+  refillsRemaining Int?
+
+  // Notes
+  notes       String?   @db.Text
+}
+
+// ============================================================================
+// External Report Model (for uploaded medical reports)
+// Based on HL7 FHIR DiagnosticReport Resource
+// ============================================================================
+model ExternalReport {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  patientId String
+  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  // Report Type (FHIR: DiagnosticReport.category)
+  type        String   // lab | pathology | radiology | cardiology | other
+
+  // Report Details (FHIR: DiagnosticReport.code)
+  title       String
+  description String?  @db.Text
+
+  // Report Date (FHIR: DiagnosticReport.effectiveDateTime)
+  reportDate  DateTime
+
+  // Provider Information (FHIR: DiagnosticReport.performer)
+  providerName    String?
+  providerAddress String?
+  providerPhone   String?
+
+  // File Information (for uploaded files)
+  fileUrl     String?  // S3 URL for uploaded PDF/image
+  fileType    String?  // pdf | image
+
+  // AI-Extracted Structured Data (from uploaded files)
+  extractedData Json?   // Structured data extracted by Gemini 3 Flash
+
+  // Key Findings (FHIR: DiagnosticReport.conclusion)
+  findings    String?  @db.Text
+  conclusion  String?  @db.Text
+
+  // Status (FHIR: DiagnosticReport.status)
+  status      String   @default("final") // registered | partial | preliminary | final | amended | corrected | cancelled
+
+  // Coding (FHIR: DiagnosticReport.code)
+  loincCode   String?  // LOINC code for the report type
+}
+
+// ============================================================================
+// Encounter Model (EHR/FHIR Compliant)
+// Based on HL7 FHIR Encounter Resource
+// ============================================================================
+model Encounter {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  patientId String
+  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  // Encounter Type (FHIR: Encounter.type)
+  encounterType String @default("ambulatory") // ambulatory | emergency | inpatient | virtual
+
+  // Inputs
+  symptoms        String   @db.Text
+  voiceTranscript String?  @db.Text
+  chiefComplaint  String?  @db.Text
+
+  // Vital Signs (FHIR: Observation resources)
+  vitalSigns      Json?    // { bloodPressure, heartRate, temperature, weight, height, etc. }
+
+  // Status (FHIR: Encounter.status)
+  status          String   @default("in-progress") // planned | in-progress | finished | cancelled
+
+  // Relations
+  scans           Scan[]
+  triageReports   TriageReport[]
+}
+
+// ============================================================================
+// Scan Model (DICOM Support)
+// Extended to support DICOM metadata and format
+// ============================================================================
+model Scan {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  encounterId String
+  encounter   Encounter @relation(fields: [encounterId], references: [id], onDelete: Cascade)
+
+  // Scan Type (DICOM Modality)
+  type        String   // e.g., "X-RAY", "MRI", "CT", "DERM", "ULTRASOUND"
+  modality    String?  // DICOM modality code: CR, CT, MR, US, DX, etc.
+
+  // Body Part (DICOM Body Part Examined)
+  bodyPart    String?
+
+  // File Information
+  fileUrl     String   // S3 URL
+  fileFormat  String   @default("image") // dicom | image
+  fileSize    Int?     // File size in bytes
+  previewUrl  String?  // URL for PNG preview of DICOM (for AI analysis)
+
+  // DICOM Metadata (extracted from DICOM files)
+  dicomMetadata Json?  // StudyInstanceUID, SeriesInstanceUID, SOPInstanceUID, etc.
+
+  // Study Information (DICOM)
+  studyInstanceUid  String?  // DICOM Study Instance UID
+  seriesInstanceUid String?  // DICOM Series Instance UID
+  sopInstanceUid    String?  // DICOM SOP Instance UID
+  studyDate         DateTime? // DICOM Study Date
+  studyDescription  String?  // DICOM Study Description
+
+  // AI Analysis
+  analysis    String?  @db.Text // AI analysis result
+  analysisCompletedAt DateTime?
+
+  // Notes
+  notes       String?  @db.Text
+}
+
+// ============================================================================
+// Triage Report Model
+// ============================================================================
+model TriageReport {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  encounterId String
+  encounter   Encounter @relation(fields: [encounterId], references: [id], onDelete: Cascade)
+
+  // AI Generated Content
+  summary           String   @db.Text
+  urgencyLevel      String   // "LOW", "MEDIUM", "HIGH", "CRITICAL"
+  recommendedAction String   @db.Text
+
+  // Structured Data
+  suggestedICD10    String[]
+  suggestedCPT      String[]
+
+  // Reasoning (Doctor's View)
+  reasoningChain    String?  @db.Text // include_thoughts output
+  confidenceScore   Float?
+
+  status            String   @default("DRAFT") // DRAFT, FINALIZED
+}
