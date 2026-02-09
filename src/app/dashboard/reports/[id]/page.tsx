@@ -86,13 +86,13 @@ export default async function ReportDetailPage({ params }: PageProps) {
                 gender: report.encounter.patient.gender,
                 dateOfBirth: report.encounter.patient.dateOfBirth.toISOString(),
                 medicalHistorySummary: report.encounter.patient.medicalHistorySummary,
-                medications: report.encounter.patient.medications.map(m => ({
+                medications: report.encounter.patient.medications.map((m: typeof report.encounter.patient.medications[number]) => ({
                     id: m.id,
                     name: m.name,
                     dosage: m.dosage,
                     status: m.status,
                 })),
-                medicalHistory: report.encounter.patient.medicalHistory.map(h => ({
+                medicalHistory: report.encounter.patient.medicalHistory.map((h: typeof report.encounter.patient.medicalHistory[number]) => ({
                     id: h.id,
                     description: h.description,
                     category: h.type,
