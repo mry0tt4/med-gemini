@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
         });
 
         // Format response with age calculation for search results
-        const formattedPatients = patients.map((patient) => ({
+        const formattedPatients = patients.map((patient: typeof patients[number]) => ({
             ...patient,
             age: calculateAge(patient.dateOfBirth),
         }));
