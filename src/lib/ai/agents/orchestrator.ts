@@ -84,9 +84,16 @@ export async function gatherPatientContext(
         throw new Error(`Patient not found: ${patientId}`);
     }
 
+    // Derive types from the Prisma query result
+    type PatientEnc = typeof patient.encounters[number];
+    type PatientScan = PatientEnc["scans"][number];
+    type PatientHistory = typeof patient.medicalHistory[number];
+    type PatientMed = typeof patient.medications[number];
+    type PatientReport = typeof patient.externalReports[number];
+
     // Find current encounter if specified
     const currentEncounter = currentEncounterId
-        ? patient.encounters.find(e => e.id === currentEncounterId)
+        ? patient.encounters.find((e: PatientEnc) => e.id === currentEncounterId)
         : patient.encounters[0];
 
     return {
@@ -102,7 +109,7 @@ export async function gatherPatientContext(
         medicalHistorySummary: patient.medicalHistorySummary,
 
         // Map encounters with full context
-        encounters: patient.encounters.map((enc) => ({
+        encounters: patient.encounters.map((enc: PatientEnc) => ({
             id: enc.id,
             encounterType: enc.encounterType,
             symptoms: enc.symptoms,
@@ -110,7 +117,7 @@ export async function gatherPatientContext(
             voiceTranscript: enc.voiceTranscript,
             vitalSigns: enc.vitalSigns as Record<string, unknown> | null,
             createdAt: enc.createdAt.toISOString(),
-            scans: enc.scans.map((scan) => ({
+            scans: enc.scans.map((scan: PatientScan) => ({
                 id: scan.id,
                 type: scan.type,
                 modality: scan.modality || undefined,
@@ -135,7 +142,7 @@ export async function gatherPatientContext(
         })),
 
         // Map EHR-compliant medical history
-        medicalHistory: patient.medicalHistory.map((h) => ({
+        medicalHistory: patient.medicalHistory.map((h: PatientHistory) => ({
             id: h.id,
             type: h.type,
             clinicalStatus: h.clinicalStatus,
@@ -149,7 +156,7 @@ export async function gatherPatientContext(
         })),
 
         // Map medications
-        medications: patient.medications.map((m) => ({
+        medications: patient.medications.map((m: PatientMed) => ({
             id: m.id,
             name: m.name,
             genericName: m.genericName,
@@ -166,7 +173,7 @@ export async function gatherPatientContext(
         })),
 
         // Map external reports
-        externalReports: patient.externalReports.map((r) => ({
+        externalReports: patient.externalReports.map((r: PatientReport) => ({
             id: r.id,
             type: r.type,
             title: r.title,

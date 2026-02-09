@@ -93,7 +93,7 @@ export async function getDashboardStats() {
             avgResponse: "1.2s",
             casesProcessed: allReports.length,
         },
-        recentReports: recentReports.map((report) => ({
+        recentReports: recentReports.map((report: typeof recentReports[number]) => ({
             id: report.id,
             name: report.summary.replace(/[*_#\[\]]/g, "").slice(0, 30) + "...",
             time: getTimeAgo(report.createdAt),
@@ -118,7 +118,7 @@ export async function getTriageQueue() {
         },
     });
 
-    return encounters.map((encounter, index) => {
+    return encounters.map((encounter: typeof encounters[number], index: number) => {
         const latestReport = encounter.triageReports[0];
         const waitTime = Math.floor(
             (Date.now() - new Date(encounter.createdAt).getTime()) / 60000
@@ -155,7 +155,7 @@ export async function getPatients() {
         },
     });
 
-    return patients.map((patient) => ({
+    return patients.map((patient: typeof patients[number]) => ({
         id: patient.id,
         name: patient.name,
         age: calculateAge(patient.dateOfBirth),
@@ -187,7 +187,7 @@ export async function getRecentCases(limit = 5) {
         },
     });
 
-    return encounters.map((encounter) => {
+    return encounters.map((encounter: typeof encounters[number]) => {
         const latestReport = encounter.triageReports[0];
         const waitTime = Math.floor(
             (Date.now() - new Date(encounter.createdAt).getTime()) / 60000
@@ -220,7 +220,7 @@ export async function getScans() {
         },
     });
 
-    return scans.map((scan) => ({
+    return scans.map((scan: typeof scans[number]) => ({
         id: `SCN-${scan.id.slice(0, 3).toUpperCase()}`,
         scanId: scan.id,
         type: scan.type,
@@ -250,7 +250,7 @@ export async function getReports() {
         },
     });
 
-    return reports.map((report) => ({
+    return reports.map((report: typeof reports[number]) => ({
         id: report.id,
         patient: report.encounter.patient.name,
         patientId: report.encounter.patientId,

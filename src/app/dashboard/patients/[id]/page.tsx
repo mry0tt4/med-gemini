@@ -47,6 +47,14 @@ export default async function PatientPage({ params }: PatientPageProps) {
         notFound();
     }
 
+    // Derive types from the Prisma query result
+    type Encounter = typeof patient.encounters[number];
+    type Scan = Encounter["scans"][number];
+    type TriageReport = Encounter["triageReports"][number];
+    type MedicalHistory = typeof patient.medicalHistory[number];
+    type Medication = typeof patient.medications[number];
+    type ExternalReport = typeof patient.externalReports[number];
+
     // Transform the data for the client component
     const patientData = {
         id: patient.id,
@@ -55,19 +63,19 @@ export default async function PatientPage({ params }: PatientPageProps) {
         gender: patient.gender,
         medicalHistorySummary: patient.medicalHistorySummary,
         createdAt: patient.createdAt.toISOString(),
-        encounters: patient.encounters.map((enc) => ({
+        encounters: patient.encounters.map((enc: Encounter) => ({
             id: enc.id,
             symptoms: enc.symptoms,
             voiceTranscript: enc.voiceTranscript,
             createdAt: enc.createdAt.toISOString(),
-            scans: enc.scans.map((scan) => ({
+            scans: enc.scans.map((scan: Scan) => ({
                 id: scan.id,
                 type: scan.type,
                 fileUrl: scan.fileUrl,
                 analysis: scan.analysis,
                 createdAt: scan.createdAt.toISOString(),
             })),
-            triageReports: enc.triageReports.map((report) => ({
+            triageReports: enc.triageReports.map((report: TriageReport) => ({
                 id: report.id,
                 summary: report.summary,
                 urgencyLevel: report.urgencyLevel,
@@ -80,7 +88,7 @@ export default async function PatientPage({ params }: PatientPageProps) {
             })),
         })),
         // EHR data
-        medicalHistory: patient.medicalHistory.map((h) => ({
+        medicalHistory: patient.medicalHistory.map((h: MedicalHistory) => ({
             id: h.id,
             type: h.type,
             clinicalStatus: h.clinicalStatus,
@@ -89,7 +97,7 @@ export default async function PatientPage({ params }: PatientPageProps) {
             severity: h.severity,
             icd10Code: h.icd10Code,
         })),
-        medications: patient.medications.map((m) => ({
+        medications: patient.medications.map((m: Medication) => ({
             id: m.id,
             name: m.name,
             genericName: m.genericName,
@@ -100,7 +108,7 @@ export default async function PatientPage({ params }: PatientPageProps) {
             startDate: m.startDate?.toISOString() || null,
             reason: m.reason,
         })),
-        externalReports: patient.externalReports.map((r) => ({
+        externalReports: patient.externalReports.map((r: ExternalReport) => ({
             id: r.id,
             type: r.type,
             title: r.title,
