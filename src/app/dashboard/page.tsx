@@ -71,7 +71,7 @@ export default async function DashboardPage() {
 
     try {
         const patientsData = await getPatients();
-        patients = patientsData.map(p => ({ id: p.id, name: p.name }));
+        patients = patientsData.map((p: { id: string; name: string }) => ({ id: p.id, name: p.name }));
     } catch (error) {
         console.error("Failed to fetch patients:", error);
         patients = [];
